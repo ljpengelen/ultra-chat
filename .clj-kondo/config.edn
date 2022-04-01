@@ -1,1 +1,1 @@
-{:lint-as {hiccup.def/defelem clojure.core/defn}}
+{:lint-as {hiccup.def/defelem clj-kondo.lint-as/def-catch-all}}
