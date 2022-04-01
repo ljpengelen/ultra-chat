@@ -1,0 +1,11 @@
+{:paths ["src" "resources"]
+ :deps {hiccup/hiccup {:mvn/version "1.0.5"}
+        http-kit/http-kit {:mvn/version "2.5.3"}
+        metosin/reitit-ring {:mvn/version "0.5.15"}
+        org.clojure/clojure {:mvn/version "1.11.0"}
+        org.clojure/data.json {:mvn/version "2.4.0"}
+        ring/ring-devel {:mvn/version "1.9.4"}}
+ :aliases {:build {:deps {io.github.clojure/tools.build {:git/tag "v0.8.1" :git/sha "7d40500"}}
+                   :ns-default build}
+           :run {:ns-default ultra_chat.core
+                 :exec-fn ultra-chat.core/-main}}}
