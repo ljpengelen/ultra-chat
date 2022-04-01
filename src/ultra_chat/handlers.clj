@@ -4,7 +4,9 @@
             [hiccup.form :as hf]
             [hiccup.page :as hp]
             [org.httpkit.server :as http-kit]
-            [ring.util.response :as rr]))
+            [ring.util.response :as rr])
+  (:import [java.util.concurrent Executors]
+           [java.util.concurrent TimeUnit]))
 
 (defn page [& content]
   {:status 200
@@ -36,6 +38,14 @@
                                                                      list-item
                                                                      hc/html
                                                                      json/write-str) "\n\n")} false)))
+
+(defn send-keep-alive! []
+  (doseq [channel @channels]
+    (http-kit/send! channel {:headers {"Content-Type" "text/event-stream"}
+                             :status 200
+                             :body ":keepalive \n\n"} false)))
+
+(.scheduleAtFixedRate (Executors/newScheduledThreadPool 1) send-keep-alive! 0 1 TimeUnit/MINUTES)
 
 (comment
   @channels
