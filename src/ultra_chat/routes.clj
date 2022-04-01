@@ -1,6 +1,7 @@
 (ns ultra-chat.routes
   (:require [reitit.ring :as ring]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
+            [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ultra-chat.handlers :as h]))
 
@@ -14,6 +15,8 @@
    (ring/router
     [["/" h/render-landing-page]
      ["/message" {:post h/accept-message}]
+     ["/file" {:post h/accept-file
+               :middleware [wrap-multipart-params]}]
      ["/message-stream" h/message-stream]]
     {:data {:middleware [wrap-params
                          wrap-keyword-params

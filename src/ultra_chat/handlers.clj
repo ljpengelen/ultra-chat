@@ -63,15 +63,23 @@
     [:post "/message"]
     (hf/text-area "message")
     (hf/submit-button "Submit"))
+   (hf/form-to
+    {:enctype "multipart/form-data"}
+    [:post "/file"]
+    (hf/file-upload {:accept ".txt"} "file")
+    (hf/submit-button "Upload"))
    [:ul {:id "message-list"}
     (for [message @messages]
       (list-item message))]
    (hp/include-js "js/events.js")))
 
+(defn process-message [message]
+  (swap! messages conj message)
+  (send-message! message))
+
 (defn accept-message [request]
   (when-let [message (get-in request [:params :message])]
-    (swap! messages conj message)
-    (send-message! message)
+    (process-message message)
     (rr/redirect "/" :see-other)))
 
 (defn message-stream [request]
@@ -79,3 +87,9 @@
    request
    {:on-open (fn [channel] (swap! channels conj channel))
     :on-close (fn [channel _] (swap! channels disj channel))}))
+
+(defn accept-file [request]
+  (let [tempfile (get-in request [:params "file" :tempfile])
+        message (slurp tempfile)]
+    (process-message message)
+    (rr/redirect "/" :see-other)))
