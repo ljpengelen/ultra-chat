@@ -3,6 +3,11 @@
         http-kit/http-kit {:mvn/version "2.5.3"}
         javax.servlet/servlet-api {:mvn/version "2.5"}
         metosin/reitit-ring {:mvn/version "0.5.15"}
+        metosin/reitit-spec {:mvn/version "0.5.15"}
+        metosin/reitit-middleware {:mvn/version "0.5.15"}
+        metosin/reitit-swagger {:mvn/version "0.5.17"}
+        metosin/reitit-swagger-ui {:mvn/version "0.5.17"}
+        metosin/muuntaja {:mvn/version "0.6.8"}
         org.clojure/clojure {:mvn/version "1.11.0"}
         org.clojure/data.json {:mvn/version "2.4.0"}
         ring/ring-core {:mvn/version "1.9.5"}

@@ -1,5 +1,11 @@
 (ns ultra-chat.routes
-  (:require [reitit.ring :as ring]
+  (:require [muuntaja.core :as m]
+            [reitit.coercion.spec]
+            [reitit.ring :as ring]
+            [reitit.ring.coercion :as coercion]
+            [reitit.ring.middleware.muuntaja :as muuntaja]
+            [reitit.swagger :as swagger]
+            [reitit.swagger-ui :as swagger-ui]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.params :refer [wrap-params]]
@@ -13,16 +19,36 @@
 (defn routes []
   (ring/ring-handler
    (ring/router
-    [["/" h/render-landing-page]
-     ["/message" {:post h/accept-message}]
+    [["/" {:get h/render-landing-page
+           :no-doc true}]
+     ["/message" {:post h/accept-message
+                  :no-doc true}]
      ["/file" {:post h/accept-file
-               :middleware [wrap-multipart-params]}]
-     ["/message-stream" h/message-stream]]
-    {:data {:middleware [wrap-params
+               :middleware [wrap-multipart-params]
+               :no-doc true}]
+     ["/message-stream" {:get h/message-stream
+                         :no-doc true}]
+     ["/api/message" {:post {:handler h/accept-message-api
+                             :parameters {:body {:message string?}}
+                             :responses {204 nil}}}]
+     ["/swagger.json"
+      {:get {:no-doc true
+             :swagger {:info {:title "Ultra chat API"}}
+             :handler (swagger/create-swagger-handler)}}]]
+    {:data {:coercion reitit.coercion.spec/coercion
+            :middleware [wrap-params
                          wrap-keyword-params
-                         no-caching]}})
+                         muuntaja/format-negotiate-middleware
+                         muuntaja/format-response-middleware
+                         muuntaja/format-request-middleware
+                         coercion/coerce-response-middleware
+                         coercion/coerce-request-middleware
+                         no-caching]
+            :muuntaja m/instance}})
    (ring/routes
     (ring/create-resource-handler
      {:path "/"})
+    (swagger-ui/create-swagger-ui-handler
+     {:path "/api-docs"})
     (ring/create-default-handler
      {:not-found (constantly {:status 404 :body "Not found"})}))))

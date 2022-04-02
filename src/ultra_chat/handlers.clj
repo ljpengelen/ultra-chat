@@ -79,8 +79,13 @@
 
 (defn accept-message [request]
   (when-let [message (get-in request [:params :message])]
-    (process-message message)
-    (rr/redirect "/" :see-other)))
+    (process-message message))
+  (rr/redirect "/" :see-other))
+
+(defn accept-message-api [request]
+  (when-let [message (get-in request [:body-params :message])]
+    (process-message message))
+  (rr/status 204))
 
 (defn message-stream [request]
   (http-kit/as-channel
