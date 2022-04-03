@@ -30,6 +30,7 @@
                          :no-doc true}]
      ["/api/message" {:post {:handler h/accept-message-api
                              :parameters {:body {:message string?}}
+                             :summary "Post a new chat message."
                              :responses {204 nil}}}]
      ["/swagger.json"
       {:get {:no-doc true
