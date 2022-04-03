@@ -3,6 +3,7 @@
             [reitit.coercion.spec]
             [reitit.ring :as ring]
             [reitit.ring.coercion :as coercion]
+            [reitit.ring.middleware.exception :as exception]
             [reitit.ring.middleware.muuntaja :as muuntaja]
             [reitit.swagger :as swagger]
             [reitit.swagger-ui :as swagger-ui]
@@ -39,8 +40,9 @@
     {:data {:coercion reitit.coercion.spec/coercion
             :middleware [wrap-params
                          wrap-keyword-params
-                         muuntaja/format-negotiate-middleware
                          muuntaja/format-response-middleware
+                         exception/exception-middleware
+                         muuntaja/format-negotiate-middleware
                          muuntaja/format-request-middleware
                          coercion/coerce-response-middleware
                          coercion/coerce-request-middleware
